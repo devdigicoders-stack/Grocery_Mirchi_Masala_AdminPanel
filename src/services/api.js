@@ -464,6 +464,24 @@ export const emailLogService = {
   }
 }
 
+/**
+ * Push Notification System API Calls
+ */
+export const notificationService = {
+  getNotifications: async (page = 1, limit = 20) => {
+    return await fetchApi(`/notifications?page=${page}&limit=${limit}`, { method: 'GET' })
+  },
+  getStatus: async () => {
+    return await fetchApi('/notifications/status', { method: 'GET' })
+  },
+  broadcastNotification: async (payload) => {
+    return await fetchApi('/notifications/broadcast', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+  }
+}
+
 export default {
   authService,
   vendorService,
@@ -473,5 +491,6 @@ export default {
   allocationService,
   reportService,
   emailLogService,
+  notificationService,
   getFileUrl
 }
