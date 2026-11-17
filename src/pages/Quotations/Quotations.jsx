@@ -786,7 +786,7 @@ export default function Quotations({ onNavigateToAllocations }) {
                         )}
                       </div>
                     </div>
-                    <p className="text-xs text-slate-400">{v.email}</p>
+                    <p className="text-xs text-slate-400 font-mono">{v.phone || 'Vendor'}</p>
                     <p className="text-xs text-slate-500 mt-2 font-medium">
                       Items quoted: <strong className="text-slate-700">{v.totalItemsQuoted}</strong> of {matrixData.items.length}
                     </p>
@@ -1151,7 +1151,7 @@ export default function Quotations({ onNavigateToAllocations }) {
                     >
                       {allVendors.map((v) => (
                         <option key={v._id} value={v._id}>
-                          {v.name} ({v.email})
+                          {v.name} {v.phone ? `(${v.phone})` : ''}
                         </option>
                       ))}
                     </select>

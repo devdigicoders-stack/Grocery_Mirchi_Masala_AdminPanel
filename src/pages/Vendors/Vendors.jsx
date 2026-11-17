@@ -192,16 +192,15 @@ export default function Vendors() {
   // Feedback states
   const [copiedLink, setCopiedLink] = useState(false)
   const [copiedPass, setCopiedPass] = useState(false)
-  const [copiedEmail, setCopiedEmail] = useState(false)
+  const [copiedPhone, setCopiedPhone] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   
   // Add / Edit form states
   const [editingVendor, setEditingVendor] = useState(null)
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    password: '',
     phone: '',
+    password: '',
     address: '',
     status: 'Active'
   })
@@ -247,9 +246,8 @@ export default function Vendors() {
     const randomSuffix = Math.floor(1000 + Math.random() * 9000)
     setFormData({
       name: '',
-      email: '',
-      password: `Mirch@${randomSuffix}`,
       phone: '',
+      password: `Mirch@${randomSuffix}`,
       address: '',
       status: 'Active'
     })
@@ -265,9 +263,8 @@ export default function Vendors() {
     setEditingVendor(vendor)
     setFormData({
       name: vendor.name || '',
-      email: vendor.email || '',
-      password: vendor.password || '',
       phone: vendor.phone || '',
+      password: vendor.password || '',
       address: vendor.address || '',
       status: vendor.status || 'Active'
     })
@@ -344,7 +341,7 @@ export default function Vendors() {
     try {
       const payload = new FormData()
       payload.append('name', vendor.name)
-      payload.append('email', vendor.email)
+      payload.append('phone', vendor.phone || '')
       payload.append('status', newStatus)
       await vendorService.updateVendor(vendor._id, payload)
       triggerToast(`Vendor "${vendor.name}" marked as ${newStatus}`)
@@ -359,8 +356,8 @@ export default function Vendors() {
     e.preventDefault()
     setFormError('')
 
-    if (!formData.name.trim() || !formData.email.trim()) {
-      setFormError('Vendor Name and Vendor Email are required.')
+    if (!formData.name.trim() || !formData.phone.trim()) {
+      setFormError('Vendor Name and Mobile Number are required.')
       return
     }
 
@@ -374,9 +371,8 @@ export default function Vendors() {
     try {
       const payload = new FormData()
       payload.append('name', formData.name.trim())
-      payload.append('email', formData.email.toLowerCase().trim())
-      payload.append('password', formData.password.trim())
       payload.append('phone', formData.phone.trim())
+      payload.append('password', formData.password.trim())
       payload.append('address', formData.address.trim())
       payload.append('status', formData.status)
 
@@ -415,9 +411,9 @@ export default function Vendors() {
     if (type === 'pass') {
       setCopiedPass(true)
       setTimeout(() => setCopiedPass(false), 2000)
-    } else if (type === 'email') {
-      setCopiedEmail(true)
-      setTimeout(() => setCopiedEmail(false), 2000)
+    } else if (type === 'phone') {
+      setCopiedPhone(true)
+      setTimeout(() => setCopiedPhone(false), 2000)
     } else if (type === 'link') {
       setCopiedLink(true)
       setTimeout(() => setCopiedLink(false), 2000)
@@ -428,7 +424,7 @@ export default function Vendors() {
   const handleSendApkToVendor = async (vendor) => {
     try {
       await vendorService.sendApkInvite(vendor._id)
-      triggerToast(`APK invite & login credentials sent to ${vendor.name} (${vendor.email})`)
+      triggerToast(`APK invite & login credentials sent to ${vendor.name} (${vendor.phone || 'Vendor'})`)
     } catch (err) {
       alert(err.message || 'Failed to send invite')
     }
@@ -508,7 +504,7 @@ export default function Vendors() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search vendor by name, email or phone..."
+              placeholder="Search vendor by name or mobile number..."
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200/90 rounded-xl text-sm text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all"
             />
           </div>
@@ -558,7 +554,7 @@ export default function Vendors() {
               <tr className="border-b border-slate-100 text-slate-800 text-[13.5px] font-bold bg-slate-50/50">
                 <th className="py-4 px-6 w-14">#</th>
                 <th className="py-4 px-6">Vendor & Profile</th>
-                <th className="py-4 px-6">Email (Login ID)</th>
+                <th className="py-4 px-6">Mobile Number (Login ID)</th>
                 <th className="py-4 px-6">Password</th>
                 <th className="py-4 px-6 text-center">Status</th>
                 <th className="py-4 px-6 text-center w-44">Actions</th>
@@ -617,9 +613,9 @@ export default function Vendors() {
                       </div>
                     </td>
 
-                    {/* Email */}
-                    <td className="py-4 px-6 text-slate-700 font-mono text-xs sm:text-sm">
-                      {vendor.email}
+                    {/* Mobile Number (Login ID) */}
+                    <td className="py-4 px-6 text-slate-800 font-mono text-xs sm:text-sm font-semibold">
+                      {vendor.phone || '—'}
                     </td>
 
                     {/* Password (Visible plain-text as requested) */}
@@ -716,8 +712,8 @@ export default function Vendors() {
                       </h4>
                       <p className="text-xs text-slate-500 leading-relaxed">
                         {searchQuery
-                          ? 'Try searching with a different name or email address.'
-                          : 'Register your 10–50 authorized grocery vendors. Only registered email IDs and passwords will be authorized to log in to the Vendor Mobile App.'}
+                          ? 'Try searching with a different name or mobile number.'
+                          : 'Register your authorized grocery vendors. Only registered mobile numbers and passwords will be authorized to log in to the Vendor Mobile App.'}
                       </p>
                       {!searchQuery && (
                         <button
@@ -808,24 +804,26 @@ export default function Vendors() {
                   </span>
                 </div>
 
-                {/* Login Email */}
+                {/* Login Mobile Number */}
                 <div className="bg-white p-3 rounded-xl border border-emerald-100 flex items-center justify-between gap-3 shadow-2xs">
                   <div>
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                      Registered Email ID
+                      Registered Mobile Number (Login ID)
                     </span>
                     <span className="font-mono text-sm font-semibold text-slate-800 select-all">
-                      {viewingVendor.email}
+                      {viewingVendor.phone || '—'}
                     </span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => copyToClipboard(viewingVendor.email, 'email')}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors cursor-pointer"
-                  >
-                    {copiedEmail ? <IconCheck className="w-3.5 h-3.5 text-emerald-600" /> : <IconCopy className="w-3.5 h-3.5" />}
-                    <span>{copiedEmail ? 'Copied' : 'Copy'}</span>
-                  </button>
+                  {viewingVendor.phone && (
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard(viewingVendor.phone, 'phone')}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors cursor-pointer"
+                    >
+                      {copiedPhone ? <IconCheck className="w-3.5 h-3.5 text-emerald-600" /> : <IconCopy className="w-3.5 h-3.5" />}
+                      <span>{copiedPhone ? 'Copied' : 'Copy'}</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Login Password */}
@@ -860,7 +858,7 @@ export default function Vendors() {
 
                 <div className="flex items-center gap-2 text-[11px] text-emerald-800/90 leading-relaxed">
                   <IconInfo className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                  <span>Vendors directly sign into the mobile app using this email and password.</span>
+                  <span>Vendors directly sign into the mobile app using this mobile number and password.</span>
                 </div>
               </div>
 
@@ -978,7 +976,7 @@ export default function Vendors() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-800">Login Authentication:</span>
-                  <span className="text-emerald-700 font-bold">Email + Plain Password</span>
+                  <span className="text-emerald-700 font-bold">Mobile Number + Plain Password</span>
                 </div>
               </div>
 
@@ -1007,7 +1005,7 @@ export default function Vendors() {
               <div className="flex items-start gap-2.5 p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
                 <IconLock className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
                 <div>
-                  <strong>Security Rule:</strong> Vendors cannot sign up publicly. Only email and password credentials registered by the Shop Owner in this portal can log into the vendor app.
+                  <strong>Security Rule:</strong> Vendors cannot sign up publicly. Only mobile number and password credentials registered by the Shop Owner in this portal can log into the vendor app.
                 </div>
               </div>
             </div>
@@ -1019,8 +1017,8 @@ export default function Vendors() {
                 onClick={handleSendBulkApk}
                 className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 rounded-xl transition-colors cursor-pointer"
               >
-                <IconMail className="w-3.5 h-3.5" />
-                <span>Email APK to All Active Vendors</span>
+                <IconSmartphone className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Send APK Link to All Active Vendors</span>
               </button>
               <button
                 type="button"
@@ -1142,21 +1140,21 @@ export default function Vendors() {
                   />
                 </div>
 
-                {/* Email (App Login ID) */}
+                {/* Mobile Number (App Login ID) */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                    Vendor Email (App Login ID) *
+                    Vendor Mobile Number (App Login ID) *
                   </label>
                   <input
-                    type="email"
+                    type="tel"
                     required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="e.g. shyam@kirana.com"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="e.g. 9876543210"
                     className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
                   />
                   <span className="text-[11px] text-slate-400 mt-1 block">
-                    Vendor will use this email address to log in to the Mobile App.
+                    Vendor will use this 10-digit mobile number to log in to the Mobile App.
                   </span>
                 </div>
 
@@ -1199,34 +1197,19 @@ export default function Vendors() {
                   </div>
                 </div>
 
-                {/* Contact Phone & Address */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                      Phone / WhatsApp
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="+91 98765 43210"
-                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                      Account Status
-                    </label>
-                    <select
-                      value={formData.status}
-                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600"
-                    >
-                      <option value="Active">Active (Permitted to Bid)</option>
-                      <option value="Inactive">Inactive (Suspended)</option>
-                    </select>
-                  </div>
+                {/* Status Selection */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    Account Status
+                  </label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600"
+                  >
+                    <option value="Active">Active (Permitted to Bid)</option>
+                    <option value="Inactive">Inactive (Suspended)</option>
+                  </select>
                 </div>
 
                 <div>

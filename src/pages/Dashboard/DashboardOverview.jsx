@@ -853,10 +853,10 @@ export default function DashboardOverview() {
 
           <div className="pt-4 mt-4 border-t border-slate-100 text-center">
             <Link
-              to="/email-logs"
+              to="/allocations"
               className="text-xs font-bold text-[#0e743d] hover:underline"
             >
-              View PO Email Dispatches Audit Trail
+              View All Allocations & Purchase Orders
             </Link>
           </div>
         </div>

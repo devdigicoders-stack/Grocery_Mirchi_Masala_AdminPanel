@@ -9,7 +9,6 @@ import Demands from './pages/Demands'
 import Quotations from './pages/Quotations'
 import Allocations from './pages/Allocations'
 import Reports from './pages/Reports'
-import EmailLogs from './pages/EmailLogs'
 import Settings from './pages/Settings'
 import { getStoredToken, authService } from './services/api'
 
@@ -70,7 +69,7 @@ export default function App() {
           <Route path="/quotations" element={<Quotations />} />
           <Route path="/allocations" element={<Allocations />} />
           <Route path="/reports" element={<Reports />} />
-          <Route path="/email-logs" element={<EmailLogs />} />
+          <Route path="/email-logs" element={<Navigate to="/" replace />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
 

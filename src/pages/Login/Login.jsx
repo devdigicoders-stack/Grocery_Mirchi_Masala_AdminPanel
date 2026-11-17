@@ -5,7 +5,7 @@ import { authService, getStoredToken } from '../../services/api'
 export default function Login({ onLogin }) {
   const navigate = useNavigate()
   // Empty default inputs (no pre-filled credentials)
-  const [email, setEmail] = useState('')
+  const [loginId, setLoginId] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(true)
@@ -23,8 +23,8 @@ export default function Login({ onLogin }) {
     e.preventDefault()
     setErrorMessage('')
 
-    if (!email.trim() || !password) {
-      setErrorMessage('Please enter both email and password.')
+    if (!loginId.trim() || !password) {
+      setErrorMessage('Please enter both Login ID and password.')
       return
     }
 
@@ -32,12 +32,12 @@ export default function Login({ onLogin }) {
 
     try {
       // Call backend API: POST /api/auth/login
-      await authService.login(email.trim(), password)
+      await authService.login(loginId.trim(), password)
       if (onLogin) onLogin()
       navigate('/', { replace: true })
     } catch (error) {
       console.warn('Login attempt failed:', error.message)
-      setErrorMessage(error.message || 'Invalid email or password. Please try again.')
+      setErrorMessage(error.message || 'Invalid credentials or password. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -91,7 +91,7 @@ export default function Login({ onLogin }) {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           
-          {/* Email Input */}
+          {/* Login ID Input */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
               <svg
@@ -104,17 +104,17 @@ export default function Login({ onLogin }) {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                <rect width="20" height="16" x="2" y="4" rx="2" />
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
               </svg>
             </div>
             <input
-              type="email"
+              type="text"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              autoComplete="email"
+              value={loginId}
+              onChange={(e) => setLoginId(e.target.value)}
+              placeholder="Enter Login ID / Mobile / Username"
+              autoComplete="username"
               className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200/90 rounded-2xl text-[14px] text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all"
             />
           </div>

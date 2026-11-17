@@ -276,34 +276,6 @@ export default function Settings() {
               <span>Shop Details</span>
             </button>
 
-            {/* Email Settings Tab */}
-            <button
-              type="button"
-              onClick={() => setActiveSubTab('email-settings')}
-              className={`flex items-center gap-2.5 sm:gap-3.5 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-[14.5px] font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 lg:w-full lg:whitespace-normal text-left ${
-                activeSubTab === 'email-settings'
-                  ? 'bg-[#eaf8f0] text-[#0e743d]'
-                  : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
-              }`}
-            >
-              <span className={activeSubTab === 'email-settings' ? 'text-[#0e743d]' : 'text-slate-500'}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 sm:w-5 h-4 sm:h-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect width="20" height="16" x="2" y="4" rx="2" />
-                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                </svg>
-              </span>
-              <span>Email Settings</span>
-            </button>
-
             {/* System Settings Tab */}
             <button
               type="button"
@@ -413,32 +385,32 @@ export default function Settings() {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                      {/* Email Field */}
+                      {/* Primary Contact Number (Admin Login ID) */}
                       <div>
                         <label className="block text-sm font-semibold text-slate-800 mb-2">
-                          Email (Admin Login ID) <span className="text-rose-500">*</span>
+                          Primary Mobile Number (Admin Login ID) <span className="text-rose-500">*</span>
                         </label>
                         <input
-                          type="email"
+                          type="tel"
                           required
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="admin@mirchmasala.com"
-                          className="w-full px-4 py-3 bg-white border border-slate-200/90 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all shadow-sm"
-                        />
-                      </div>
-
-                      {/* Contact Number Field */}
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-800 mb-2">
-                          Contact Number
-                        </label>
-                        <input
-                          type="text"
                           value={contactNumber}
                           onChange={(e) => setContactNumber(e.target.value)}
                           placeholder="+91 98765 43210"
                           className="w-full px-4 py-3 bg-white border border-slate-200/90 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all shadow-sm"
+                        />
+                      </div>
+
+                      {/* GSTIN Field */}
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-800 mb-2">
+                          GSTIN / Business Registration
+                        </label>
+                        <input
+                          type="text"
+                          value={gstin}
+                          onChange={(e) => setGstin(e.target.value)}
+                          placeholder="e.g. 09AAAAA0000A1Z5"
+                          className="w-full px-4 py-3 bg-white border border-slate-200/90 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all shadow-sm font-mono uppercase"
                         />
                       </div>
                     </div>
@@ -491,99 +463,7 @@ export default function Settings() {
                   </form>
                 )}
 
-                {/* Tab 2: Email Settings (MongoDB Settings API) */}
-                {activeSubTab === 'email-settings' && (
-                  <form onSubmit={handleSaveEmailSettings} className="space-y-6">
-                    <div>
-                      <h2 className="text-lg font-bold text-slate-900">
-                        Email Configuration (SMTP)
-                      </h2>
-                      <p className="text-xs text-slate-500 mt-0.5">
-                        Configure SMTP mail credentials used for dispatching Vendor POs, invitation credentials, and bidding deadline reminders.
-                      </p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-800 mb-2">
-                        SMTP Host Server
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={smtpHost}
-                        onChange={(e) => setSmtpHost(e.target.value)}
-                        placeholder="e.g. smtp.mailgun.org or smtp.gmail.com"
-                        className="w-full px-4 py-3 bg-white border border-slate-200/90 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all shadow-sm font-mono text-xs"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-800 mb-2">
-                          SMTP Port
-                        </label>
-                        <input
-                          type="number"
-                          required
-                          value={smtpPort}
-                          onChange={(e) => setSmtpPort(e.target.value)}
-                          placeholder="587"
-                          className="w-full px-4 py-3 bg-white border border-slate-200/90 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all shadow-sm"
-                        />
-                        <span className="text-[11px] text-slate-400 mt-1 block">Common: 587 (TLS), 465 (SSL), 25</span>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-800 mb-2">
-                          Security Encryption
-                        </label>
-                        <select
-                          value={emailEncryption}
-                          onChange={(e) => setEmailEncryption(e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-slate-200/90 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all shadow-sm"
-                        >
-                          <option value="TLS">TLS (Recommended)</option>
-                          <option value="SSL">SSL</option>
-                          <option value="None">None</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-800 mb-2">
-                        Sender Notification Email
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={senderEmail}
-                        onChange={(e) => setSenderEmail(e.target.value)}
-                        placeholder="notifications@mirchmasala.com"
-                        className="w-full px-4 py-3 bg-white border border-slate-200/90 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all shadow-sm"
-                      />
-                      <span className="text-[11px] text-slate-400 mt-1 block">Will appear in the "From:" header of dispatched emails</span>
-                    </div>
-
-                    <div className="flex justify-end pt-4 border-t border-slate-100">
-                      <button
-                        type="submit"
-                        disabled={isSaving}
-                        className="px-7 py-3 bg-[#0e743d] hover:bg-[#0a6032] text-white font-bold text-sm rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer disabled:opacity-50 flex items-center gap-2"
-                      >
-                        {isSaving ? (
-                          <>
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            <span>Saving Settings...</span>
-                          </>
-                        ) : (
-                          <span>Save Email Settings</span>
-                        )}
-                      </button>
-                    </div>
-                  </form>
-                )}
-
-                {/* Tab 3: System Settings (MongoDB Settings API) */}
+                {/* Tab 2: System Settings (MongoDB Settings API) */}
                 {activeSubTab === 'system-settings' && (
                   <form onSubmit={handleSaveSystemSettings} className="space-y-6">
                     <div>
@@ -669,7 +549,7 @@ export default function Settings() {
                         />
                         <div className="text-xs">
                           <p className="font-bold text-slate-800">Notify active vendors when a new demand is published</p>
-                          <p className="text-slate-500">Automatically creates email logs and pushes notice to vendor mobile app.</p>
+                          <p className="text-slate-500">Automatically broadcasts push notifications and live alerts to the vendor mobile app.</p>
                         </div>
                       </label>
                     </div>

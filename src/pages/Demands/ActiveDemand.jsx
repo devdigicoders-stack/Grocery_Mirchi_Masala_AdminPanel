@@ -598,7 +598,7 @@ export default function ActiveDemand({
                           <td className="py-4 px-6 font-medium text-slate-500">{idx + 1}</td>
                           <td className="py-4 px-6">
                             <p className="font-semibold text-slate-800">{sub.vendor}</p>
-                            <p className="text-xs text-slate-400">{sub.email}</p>
+                            <p className="text-xs text-slate-400 font-mono">{sub.phone || sub.vendor}</p>
                           </td>
                           <td className="py-4 px-6 text-slate-600 text-xs font-medium">
                             {formatDate(sub.time)}
@@ -655,7 +655,7 @@ export default function ActiveDemand({
                     <tr className="border-b border-slate-100 text-slate-800 text-[13.5px] font-bold">
                       <th className="py-4 px-6 w-16">#</th>
                       <th className="py-4 px-6">Vendor Name</th>
-                      <th className="py-4 px-6">Contact Email & Phone</th>
+                      <th className="py-4 px-6">Mobile / Phone</th>
                       <th className="py-4 px-6 text-center">Status</th>
                       <th className="py-4 px-6 text-center w-36">Action</th>
                     </tr>
@@ -674,9 +674,8 @@ export default function ActiveDemand({
                           <td className="py-4 px-6 font-semibold text-slate-800">
                             {vendor.vendor}
                           </td>
-                          <td className="py-4 px-6 text-xs text-slate-600">
-                            <p className="font-medium text-slate-800">{vendor.email}</p>
-                            <p className="text-slate-400">{vendor.phone || 'No phone set'}</p>
+                          <td className="py-4 px-6 text-xs text-slate-600 font-mono">
+                            {vendor.phone || 'No phone set'}
                           </td>
                           <td className="py-4 px-6 text-center">
                             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
@@ -737,7 +736,7 @@ export default function ActiveDemand({
                     Quotation Rates: {selectedQuote.vendor}
                   </h3>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Submitted: {formatDate(selectedQuote.time)} • {selectedQuote.email}
+                    Submitted: {formatDate(selectedQuote.time)} • {selectedQuote.phone ? `Phone: ${selectedQuote.phone}` : selectedQuote.vendor}
                   </p>
                 </div>
                 <button

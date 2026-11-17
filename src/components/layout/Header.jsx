@@ -8,7 +8,7 @@ import soundManager from '../../utils/sound'
 export default function Header({ onLogout, title, onToggleSidebar }) {
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
-  const [adminUser, setAdminUser] = useState(getStoredAdmin() || { name: 'Admin', email: 'admin@mirchmasala.com' })
+  const [adminUser, setAdminUser] = useState(getStoredAdmin() || { name: 'Admin', phone: '+91 98765 43210' })
 
   // Password modal form state
   const [currentPassword, setCurrentPassword] = useState('')
@@ -88,7 +88,9 @@ export default function Header({ onLogout, title, onToggleSidebar }) {
 
   // SSE Live stream connection for Real-Time Chime & Instant Alerts
   useEffect(() => {
-    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+    const apiBase =
+      import.meta.env.VITE_API_BASE_URL ||
+      'https://grocery-mirchi-masala-backend.onrender.com/api'
     const sseUrl = `${apiBase.replace(/\/api\/?$/, '')}/api/demands/live-stream`
 
     let eventSource = null
@@ -128,7 +130,6 @@ export default function Header({ onLogout, title, onToggleSidebar }) {
     if (p === '/quotations') return 'Quotations & Bidding Matrix'
     if (p.startsWith('/allocations')) return 'Final Order Allocations'
     if (p === '/reports') return 'Reports'
-    if (p === '/email-logs') return 'Email Logs'
     if (p === '/settings') return 'Settings'
     return 'Dashboard'
   }
@@ -392,11 +393,11 @@ export default function Header({ onLogout, title, onToggleSidebar }) {
                     {notifStatus?.registeredVendorsWithTokens || 0} Registered Devices
                   </span>
                   <Link
-                    to="/email-logs"
+                    to="/allocations"
                     onClick={() => setShowNotifMenu(false)}
                     className="font-bold text-[#0e743d] hover:underline"
                   >
-                    View Communication Logs →
+                    View Allocations →
                   </Link>
                 </div>
               </div>
@@ -459,7 +460,7 @@ export default function Header({ onLogout, title, onToggleSidebar }) {
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 animate-in fade-in duration-150">
                 <div className="px-4 py-2.5 border-b border-slate-100">
                   <p className="text-xs font-bold text-slate-900">{adminUser.name || 'Admin'}</p>
-                  <p className="text-[11px] text-slate-500 truncate">{adminUser.email || 'admin@mirchmasala.com'}</p>
+                  <p className="text-[11px] text-slate-500 truncate">{adminUser.phone || 'Store Administrator'}</p>
                 </div>
 
                 <Link
@@ -713,7 +714,7 @@ export default function Header({ onLogout, title, onToggleSidebar }) {
                     <option value="">-- Choose Vendor --</option>
                     {vendorsList.map((v) => (
                       <option key={v._id || v.id} value={v._id || v.id}>
-                        {v.name} ({v.email})
+                        {v.name} {v.phone ? `(${v.phone})` : ''}
                       </option>
                     ))}
                   </select>

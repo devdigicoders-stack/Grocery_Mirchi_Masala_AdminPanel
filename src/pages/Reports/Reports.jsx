@@ -134,7 +134,6 @@ export default function Reports() {
         if (!q) return true
         return (
           v.name?.toLowerCase().includes(q) ||
-          v.email?.toLowerCase().includes(q) ||
           v.phone?.toLowerCase().includes(q) ||
           v.status?.toLowerCase().includes(q)
         )
@@ -225,8 +224,7 @@ export default function Reports() {
       headers = [
         'S.No',
         'Vendor Name',
-        'Email Address',
-        'Phone Number',
+        'Mobile Number',
         'Vendor Status',
         'Demands Quoted',
         'Items Quoted',
@@ -239,7 +237,6 @@ export default function Reports() {
         ...processedRows.map((v, idx) => [
           idx + 1,
           v.name,
-          v.email,
           v.phone || '-',
           v.status,
           v.demandsQuotedCount || 0,
@@ -738,7 +735,7 @@ export default function Reports() {
                           activeReportType === 'demand-summary'
                             ? 'Search by Demand Code or Status...'
                             : activeReportType === 'vendor-performance'
-                            ? 'Search by Vendor Name, Email, Phone...'
+                            ? 'Search by Vendor Name or Mobile...'
                             : 'Search by Grocery Item Name or Category...'
                         }
                         className="w-full pl-9 pr-8 py-2 text-xs bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-[#0e743d] transition-all"
@@ -961,8 +958,7 @@ export default function Reports() {
                                     </span>
                                   </td>
                                   <td className="py-3 px-4 text-slate-600">
-                                    <p className="text-xs">{v.email}</p>
-                                    {v.phone && <p className="text-slate-400 text-[10px]">{v.phone}</p>}
+                                    <p className="text-xs font-mono">{v.phone || '-'}</p>
                                   </td>
                                   <td className="py-3 px-4 text-center font-semibold text-slate-700">
                                     {v.demandsQuotedCount}

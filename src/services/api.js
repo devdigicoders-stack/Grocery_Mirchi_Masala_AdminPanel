@@ -3,7 +3,9 @@
  * Uses environment variable VITE_API_BASE_URL (never hardcoded)
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  'https://grocery-mirchi-masala-backend.onrender.com/api'
 
 // Helper to get static file URL (for uploads) from backend
 export const getFileUrl = (filePath) => {
@@ -54,7 +56,7 @@ export async function fetchApi(endpoint, options = {}) {
     })
   } catch (networkError) {
     throw new Error(
-      `Cannot connect to backend server at ${API_BASE_URL}. Please ensure backend is running on port 5000.`
+      `Cannot connect to backend server at ${API_BASE_URL}. Please check internet connection or server status.`
     )
   }
 
@@ -80,10 +82,10 @@ export async function fetchApi(endpoint, options = {}) {
  */
 export const authService = {
   // Login admin
-  login: async (email, password) => {
+  login: async (loginId, password) => {
     const res = await fetchApi('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ loginId, identifier: loginId, email: loginId, password })
     })
     if (res.token) {
       setStoredToken(res.token)
