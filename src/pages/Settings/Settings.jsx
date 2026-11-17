@@ -116,21 +116,33 @@ export default function Settings() {
     }
   }, [])
 
-  // 1. Save Shop Profile to MongoDB
+  // 1. Save Shop Profile & Login Email/Password to MongoDB
   const handleSaveProfile = async (e) => {
     e.preventDefault()
     setIsSaving(true)
 
     try {
-      const res = await authService.updateProfile({
+      const payload = {
         name: ownerName,
-        email,
+        email: email.trim(),
         phone: contactNumber,
         shopName,
         address,
         gstin
-      })
-      triggerToast(res?.message || 'Shop details updated successfully in MongoDB!', 'success')
+      }
+
+      if (newPassword && newPassword.trim().length > 0) {
+        if (newPassword.trim().length < 6) {
+          triggerToast('New password must be at least 6 characters long.', 'error')
+          setIsSaving(false)
+          return
+        }
+        payload.newPassword = newPassword.trim()
+      }
+
+      const res = await authService.updateProfile(payload)
+      if (newPassword) setNewPassword('')
+      triggerToast(res?.message || 'Admin profile and credentials updated successfully in MongoDB!', 'success')
     } catch (error) {
       triggerToast(error.message || 'Failed to update shop details.', 'error')
     } finally {
@@ -385,21 +397,43 @@ export default function Settings() {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                      {/* Primary Contact Number (Admin Login ID) */}
+                      {/* Admin Login Email */}
                       <div>
                         <label className="block text-sm font-semibold text-slate-800 mb-2">
-                          Primary Mobile Number (Admin Login ID) <span className="text-rose-500">*</span>
+                          Admin Login Email <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="e.g. admin@mirchmasala.com"
+                          className="w-full px-4 py-3 bg-white border border-slate-200/90 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all shadow-sm"
+                        />
+                        <span className="text-[11px] text-slate-400 mt-1 block">
+                          You will use this email address to log into the Admin portal.
+                        </span>
+                      </div>
+
+                      {/* Primary Contact Mobile Number */}
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-800 mb-2">
+                          Primary Mobile Number
                         </label>
                         <input
                           type="tel"
-                          required
                           value={contactNumber}
                           onChange={(e) => setContactNumber(e.target.value)}
                           placeholder="+91 98765 43210"
                           className="w-full px-4 py-3 bg-white border border-slate-200/90 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all shadow-sm"
                         />
+                        <span className="text-[11px] text-slate-400 mt-1 block">
+                          Contact number for store operations and support.
+                        </span>
                       </div>
+                    </div>
 
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       {/* GSTIN Field */}
                       <div>
                         <label className="block text-sm font-semibold text-slate-800 mb-2">
@@ -413,20 +447,23 @@ export default function Settings() {
                           className="w-full px-4 py-3 bg-white border border-slate-200/90 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all shadow-sm font-mono uppercase"
                         />
                       </div>
-                    </div>
 
-                    {/* GSTIN Field */}
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-800 mb-2">
-                        GSTIN / Tax Registration Number
-                      </label>
-                      <input
-                        type="text"
-                        value={gstin}
-                        onChange={(e) => setGstin(e.target.value)}
-                        placeholder="e.g. 07AAAAA0000A1Z5"
-                        className="w-full px-4 py-3 bg-white border border-slate-200/90 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all shadow-sm font-mono"
-                      />
+                      {/* Change Password from Profile (Optional) */}
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-800 mb-2">
+                          Change Password <span className="text-slate-400 text-xs font-normal">(Optional)</span>
+                        </label>
+                        <input
+                          type="password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          placeholder="Leave blank to keep current password"
+                          className="w-full px-4 py-3 bg-white border border-slate-200/90 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all shadow-sm"
+                        />
+                        <span className="text-[11px] text-slate-400 mt-1 block">
+                          Enter 6+ characters if you wish to change your password here.
+                        </span>
+                      </div>
                     </div>
 
                     {/* Shop Address Field */}

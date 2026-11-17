@@ -420,13 +420,38 @@ export default function Vendors() {
     }
   }
 
-  // Send APK invite to single vendor
-  const handleSendApkToVendor = async (vendor) => {
+  // Send APK & Credentials directly via WhatsApp to vendor
+  const handleSendApkToVendor = (vendor) => {
     try {
-      await vendorService.sendApkInvite(vendor._id)
-      triggerToast(`APK invite & login credentials sent to ${vendor.name} (${vendor.phone || 'Vendor'})`)
+      const rawPhone = String(vendor.phone || '').trim().replace(/\D/g, '')
+      if (!rawPhone || rawPhone.length < 10) {
+        alert(`Vendor "${vendor.name}" ke paas valid 10-digit mobile number nahi hai. Kripya pehle mobile number add karein.`)
+        return
+      }
+
+      // If 10 digits, prepend 91 for India; otherwise use the cleaned number
+      const phoneWithCountry = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone
+      const apkUrl = 'https://grocery-mirchi-masala-backend.onrender.com/downloads/vendor-app.apk'
+
+      const message =
+        `Namaste *${vendor.name}* ji,\n\n` +
+        `Aapka *Mirch Masala Grocery Shop* B2B Vendor App login details taiyar hai:\n\n` +
+        `📱 *Login Mobile Number:* ${vendor.phone}\n` +
+        `🔑 *Password:* ${vendor.password || 'vendor123'}\n\n` +
+        `📲 *Download Vendor App (.apk):*\n${apkUrl}\n\n` +
+        `Kripya app install karein aur apne mobile number aur password se login karke daily demands par apne quotations submit karein.\n\n` +
+        `Dhanyawad,\n*Mirch Masala Grocery Shop*`
+
+      const waUrl = `https://wa.me/${phoneWithCountry}?text=${encodeURIComponent(message)}`
+
+      // Non-blocking sync with backend to log lastInviteSentAt
+      vendorService.sendApkInvite(vendor._id).catch(() => {})
+
+      // Open WhatsApp directly in new tab / desktop app
+      window.open(waUrl, '_blank')
+      triggerToast(`Opening WhatsApp for ${vendor.name} (${vendor.phone})...`)
     } catch (err) {
-      alert(err.message || 'Failed to send invite')
+      alert(err.message || 'WhatsApp open karne me samasya aayi')
     }
   }
 
@@ -435,7 +460,7 @@ export default function Vendors() {
     try {
       const res = await vendorService.sendBulkApkInvite()
       setIsApkModalOpen(false)
-      triggerToast(res.message || 'Bulk APK invite dispatched to all active vendors!')
+      triggerToast(res.message || 'Bulk APK invite prepared for all active vendors!')
     } catch (err) {
       alert(err.message || 'Failed to send bulk invites')
     }
@@ -666,12 +691,12 @@ export default function Vendors() {
                           <IconEye className="w-4 h-4" />
                         </button>
 
-                        {/* 2. Send APK Icon Button */}
+                        {/* 2. Send APK & Login Credentials on WhatsApp */}
                         <button
                           type="button"
                           onClick={() => handleSendApkToVendor(vendor)}
                           className="text-emerald-600 hover:text-emerald-800 p-1.5 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
-                          title="Send APK download link to this vendor"
+                          title={`Send APK & Login Credentials to ${vendor.name} via WhatsApp`}
                         >
                           <IconSend className="w-4 h-4" />
                         </button>
@@ -906,9 +931,10 @@ export default function Vendors() {
                   type="button"
                   onClick={() => handleSendApkToVendor(viewingVendor)}
                   className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 rounded-xl transition-colors cursor-pointer"
+                  title="Share credentials and app download link directly via WhatsApp"
                 >
                   <IconSend className="w-3.5 h-3.5" />
-                  <span>Send APK Invite</span>
+                  <span>Send on WhatsApp</span>
                 </button>
                 <button
                   type="button"
@@ -988,12 +1014,12 @@ export default function Vendors() {
                   <input
                     type="text"
                     readOnly
-                    value="https://mirchmasala.shop/downloads/MirchMasala-Vendor-v1.0.apk"
+                    value="https://grocery-mirchi-masala-backend.onrender.com/downloads/vendor-app.apk"
                     className="flex-1 px-3 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs font-mono text-slate-700 select-all"
                   />
                   <button
                     type="button"
-                    onClick={() => copyToClipboard('https://mirchmasala.shop/downloads/MirchMasala-Vendor-v1.0.apk', 'link')}
+                    onClick={() => copyToClipboard('https://grocery-mirchi-masala-backend.onrender.com/downloads/vendor-app.apk', 'link')}
                     className="flex items-center gap-1.5 px-3.5 py-2.5 bg-[#0e743d] hover:bg-[#0a6032] text-white font-semibold rounded-xl text-xs shadow-xs cursor-pointer"
                   >
                     {copiedLink ? <IconCheck className="w-3.5 h-3.5" /> : <IconCopy className="w-3.5 h-3.5" />}
